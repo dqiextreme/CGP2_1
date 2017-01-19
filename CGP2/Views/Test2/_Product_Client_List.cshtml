@@ -1,0 +1,156 @@
+﻿@{
+    List<CGP2_1.Models.VST_T3_JOEC_PROD> lstt = new List<CGP2_1.Models.VST_T3_JOEC_PROD>();
+    lstt = ViewBag.list1;
+
+            var lst1 = lstt.Select(x => new {
+                id = x.cproducto, values = new {
+                    cproducto = x.cproducto, c_nomb_comer = x.c_nomb_comer, ccompany = x.ccompany, ccostobruto_u1 = x.ccostobruto_u1, cname = x.cname, cnamefc = x.cnamefc, cprecioventamax = x.cprecioventamax
+                }
+            }).ToList();
+            var lst21 = Newtonsoft.Json.JsonConvert.SerializeObject(lst1);
+}
+@*<div id="dial" class="modal-dialog">*@
+<div id="dial" style="width:90%;" class="modal-dialog">
+    
+<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Modal Header</h4></div><div class="modal-body">
+
+<!----table------------------------------------------------------------------------------------->
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>cproducto</th>
+        <th>cnamefc</th>
+        <th>ccostobruto_u1</th>
+        <th>cprecioventamax</th>
+        <th>c_nomb_comer</th>
+        <th>cname</th>
+        <th>ccompany</th>
+      </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in lstt)
+        {
+          <tr id="'@p.cproducto.ToString()'">
+              <td>
+                  <button type="button" class="btn btn-info btn-sm" onclick="add3(
+    '@p.cproducto',
+    '@p.cnamefc',
+    '@p.ccostobruto_u1',
+    '@p.cprecioventamax',
+    '@p.c_nomb_comer',
+    '@p.cname'
+    )" > agregar </button>
+              </td>
+              <td>@p.cnamefc</td>
+              <td>@p.ccostobruto_u1</td>
+              <td>@p.cprecioventamax</td>
+              <td>@p.c_nomb_comer</td>
+              <td>@p.cname</td>
+              <td>@p.ccompany</td>
+              @*<td><button type="button" class="btn btn-info btn-sm" onclick="f3('@p.cproducto')" > agregar </button></td>*@
+          </tr>
+        }
+    </tbody>
+      
+  </table>
+</div>
+<!----table------------------------------------------------------------------------------------->        
+
+</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div>
+      
+</div>
+<script>
+    function add3(cproducto,cnamefc,ccostobruto_u1,cprecioventamax,c_nomb_comer,cname) {
+        $("#linea2").append("<tr>" + 
+        "<td>" + cproducto + "</td>" +
+        "<td>" + cnamefc + "</td>" +
+        "<td>" + ccostobruto_u1 + "</td>" +
+        "<td>" + cprecioventamax + "</td>" +
+        "<td>" + c_nomb_comer + "</td>" +
+        "<td>" + cname + "</td></tr>");
+    }
+
+    function f3(prod){
+        var result = findarr(@Html.Raw(lst21), prod);
+
+        $("#linea2").append("<tr>" + 
+                            "<td>" + result["cproducto"] + "</td>" +
+                            "<td>" + result["cnamefc"] + "</td>" +
+                            "<td>" + result["ccostobruto_u1"] + "</td>" +
+                            "<td>" + result["cprecioventamax"] + "</td>" +
+                            "<td>" + result["c_nomb_comer"] + "</td>" +
+                            "<td>" + result["cname"] + "</td></tr>");
+    }
+
+    function findarr(arr, key){
+        for (var z = 0; z < arr.length; z++) { 
+            if (arr[z]["id"] == key) {
+                return arr[z]["values"];
+            }
+        }
+    }
+
+ 
+</script>
+@*<script>
+    function f1(prod)
+    {
+        var arr = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(lstt.ToList().Where(x => x.cproducto == "010114080").ToList()[0]));
+        var arr1 = arr["cproducto"];
+        alert(arr1);
+    }
+
+function f2(prod)
+    {
+        @{
+            var lst = lstt.Take(5).ToList().Select(x => new {
+                id = x.cproducto, values = new {
+                    cproducto = x.cproducto, c_nomb_comer = x.c_nomb_comer, ccompany = x.ccompany, ccostobruto_u1 = x.ccostobruto_u1, cname = x.cname, cnamefc = x.cnamefc, cprecioventamax = x.cprecioventamax
+                }
+            }).ToList();
+            var lst2 = Newtonsoft.Json.JsonConvert.SerializeObject(lst);
+            var ar = Newtonsoft.Json.JsonConvert.SerializeObject(lst); 
+            }
+
+        var ch = @Html.Raw(lst2);
+        var chn = findarr(ch, prod);
+
+        $("#linea2").append("<tr>" + 
+               "<td>" + chn["cproducto"] + "</td>" +
+                "<td>" + chn["c_nomb_comer"] + "</td>" +
+                "<td>" + chn["ccompany"] + "</td>" +
+                "<td>" + chn["ccostobruto_u1"] + "</td>" +
+                "<td>" + chn["cname"] + "</td>" +
+                "<td>" + chn["cnamefc"] + "</td>" +
+                "<td>" + chn["cprecioventamax"] + "</td></tr>");
+    }
+
+function findarr(arr, key)
+    {
+        for (var z = 0; z < arr.length; z++) { 
+            if (arr[z]["id"] == key) {
+                return arr[z]["values"];
+            }
+        }
+    }
+</script>*@
+
+
+
+
+
+
+  @*<table class="table">
+    <thead>
+      <tr>
+        <th>#</th><th>Firstname</th><th>Lastname</th><th>Age</th><th>City</th><th>Country</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td><td>Anna</td><td>Pitt</td><td>35</td><td>New York</td><td>USA</td>
+      </tr>
+    </tbody>
+  </table>*@

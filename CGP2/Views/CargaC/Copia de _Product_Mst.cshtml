@@ -1,0 +1,180 @@
+﻿@{
+
+    List<CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA> Lista = new List<CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA>();
+    Lista = ViewBag.List;
+
+    List<CGP2_1.Clase.Prod_Desc_Json.prod_desc3> Lista2 = ViewBag.List2;
+    
+    
+
+    //genero el JSON maestro
+    var JResult = Newtonsoft.Json.JsonConvert.SerializeObject(Lista);
+}
+
+<div id="dial" style="width:90%; max-height: 90%;" class="modal-dialog">
+    
+<div class="modal-content" style="text-align:center;">
+    <div class="modal-header-xs">
+        <div class="pagination pagination-xs" style="max-width:90%;">
+            <h4 class="modal-title">Client</h4>
+            
+            @for (int i = 1; i < ((Lista.Count / 10) + 1); i++)
+            {
+                <li><a onclick="pag(@i)">@i</a></li>
+            }
+        </div>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+
+<!----table------------------------------------------------------------------------------------->
+<div class="table-responsive">
+  <table class="table ">
+    <thead>
+      <tr>
+        <th width="10%">Producto</th>
+        <th width="55%">Descripcion</th>
+        <!--inputs-->
+        <th width="10%">PMV</th>
+        <th width="5%">Cajas</th>
+        <th width="5%">Unidad</th>
+        <th width="5%">DescFijo</th>
+        <th width="5%">Desc2</th>
+        <th width="5%">Desc3</th>
+      </tr>
+    </thead>
+    <tbody id="tbl_body">
+        
+        
+        @foreach (var p in Lista.Take(10).ToList())
+        {
+            <tr style="text-align:justify;" id="@p.cproducto.ToString().Trim()">
+                <td>
+                    <button id="@string.Concat("btn", @p.cproducto.ToString())" type="button" class="btn-xs btn-info btn-sm" onclick="add_m_list('@p.ccompany', '@p.cvendedor', '@p.cproducto', '@p.cnamefc', '@p.ccostobruto_u1', '@p.cprecioventamax', '@p.c_nomb_comer', '@p.cname')" > 
+                    @p.cproducto.ToString() </button>
+                </td>
+                <td>@p.cnamefc</td>
+                <!--inputs-->
+                <td>@p.ccostobruto_u1</td>
+                @*<td>@p.cprecioventamax</td>*@
+                    <td><input class="col-sm-12" id="@string.Concat(@p.cproducto.ToString(), "_cajas")" /></td>
+                    <td><input class="col-sm-12" id="@string.Concat(@p.cproducto.ToString(), "_unidad")" /></td>
+                    <td><input class="col-sm-12" id="@string.Concat(@p.cproducto.ToString(), "_descfijo")" /></td>
+                    <td><input class="col-sm-12" id="@string.Concat(@p.cproducto.ToString(), "_desc2")" /></td>
+                    <td><input class="col-sm-12" id="@string.Concat(@p.cproducto.ToString(), "_desc3")" /></td>
+                
+                @*<td class="dropdown">
+                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Selec.</a>
+                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                    <li><a href="#">Action</a></li>
+                        <li><a href="#">Action2</a></li>
+                    </ul>
+                </td>*@
+               
+                @*gen json master*@
+              @*<td><button type="button" class="btn btn-info btn-sm" onclick="t1('@p.ccompany', '@p.cvendedor', '@p.cproducto', '@p.cnamefc', '@p.ccostobruto_u1', '@p.cprecioventamax', '@p.c_nomb_comer', '@p.cname')" > agregar </button></td>*@
+          </tr>
+        }
+    </tbody>
+      
+  </table>
+</div>
+<!----table------------------------------------------------------------------------------------->        
+
+</div>
+    
+    @*<div class="modal-footer">
+        <button type="button" class="btn-xs btn-default" data-dismiss="modal">Close</button>
+    </div>*@
+</div>
+<script>
+    function Ver3(){
+        $("#tbl_body").find('tr').each(function () {
+            var codp = $(this).find('td').eq(3).text().trim();
+            if ($.inArray(codp,a1) != -1){
+                $("#tbl_body > #" + codp).find('td').eq(0).replaceWith("<td>" + codp + "</td>");
+            }});
+    }
+
+    var a1 = [];
+    function Ver2(cproducto) {
+        if ($.inArray(cproducto, a1) == -1) {
+            a1.push(cproducto);
+            $("#tbl_body > #" + cproducto).find('td').eq(0).replaceWith("<td>" + cproducto + "</td>");
+            return true;
+        }else{ return false; }
+    }
+
+    function aon()
+    {
+        alert();
+    }
+
+    function add_m_list(ccompany, cvendedor, cproducto, cnamefc, ccostobruto_u1, cprecioventamax, c_nomb_comer, cname) {
+        if (Ver2(cproducto)) {
+            "<th></th><th>Producto</th><th>Descripción</th><th>PMV</th><th>Cajas</th><th>Unidad</th><th>DescFijo</th><th>Desc2</th><th>Desc3</th>"
+            $("#Prod_Tbody").append("<tr id=\"" + cproducto +"\">"+
+                            "<td>" +
+                            "<a class=\"glyphicon glyphicon-ban-circle\" onclick=\"Rem2("+ cproducto +")\"></a> - " + 
+                            "<a class=\"glyphicon glyphicon-remove\" onclick=\"Rem2("+ cproducto +")\"></a>" + 
+                            "</td>" +
+                            //"<td><span class=\"glyphicon glyphicon-ban-circle\"></span></td>" +
+                            //"<td><span onclick=\"aon()\" class=\"btn badge glyphicon glyphicon-ban-circle\"> </span></td>" +
+                            "<td>" + cproducto + "</td>" +
+                            "<td>" + cnamefc + "</td>" +
+                            "<td>" + cprecioventamax + "</td>" +
+                            "<td><input class=\"col-sm-12\" id=\"" + cproducto + "_cajas" + "\" /></td>" +
+                            "<td><input class=\"col-sm-12\" id=\"" + cproducto + "_unidad" + "\" /></td>" +
+                            "<td><input class=\"col-sm-12\" id=\"" + cproducto + "_descfijo" + "\" /></td>" +
+                            "<td><input class=\"col-sm-12\" id=\"" + cproducto + "_desc2" + "\" /></td>" +
+                            "<td><input class=\"col-sm-12\" id=\"" + cproducto + "_desc3" + "\" /></td>" +
+                            "</tr>");
+                            
+            //"<td>" + cname + "</td></tr>");
+        }
+}
+
+//paginacion
+function pag(pos) {
+    var sk = ((pos - 1 ) * 10); 
+    var ta = sk + 10;
+
+    var result = @Html.Raw(JResult);
+    var prin = "";
+    for (var i = sk; i < ta; i++) {
+            prin += '<tr style="text-align:justify;" id="' + result[i]['cproducto'] + '">' +
+            '<td><button id="btn' + result[i]['cproducto'] + '" type="button" class="btn-xs btn-info btn-sm" onclick="add_m_list(\'' + 
+            result[i]['ccompany'] + '\', \'' +
+            result[i]['cvendedor'] + '\', \'' +
+            result[i]['cproducto'] + '\', \'' +
+            result[i]['cnamefc'] + '\', \'' +
+            result[i]['ccostobruto_u1'] + '\', \'' +
+            result[i]['cprecioventamax'] + '\', \'' +
+            result[i]['c_nomb_comer'] + '\', \'' +
+            result[i]['cname'] + '\')" >' +
+            result[i]['cproducto'] + '</button></td>' +
+                        '<td>' + result[i]['cnamefc'] + '</td>' +
+                             //inputs
+                            '<td>' + result[i]['ccostobruto_u1'] + '</td>' +
+                            @*'<td>' + result[i]['cprecioventamax'] + '</td>'*@
+//'<td>Cajas</td>' +
+//'<td>Unidad</td>' +
+//'<td>DescFijo</td>' +
+//'<td>Desc2</td>' +
+//'<td>Desc3</td></tr>';
+
+'<td><input class="col-sm-12" id="' + result[i]['cproducto'] + '_cajas' + '" /></td>' +
+'<td><input class="col-sm-12" id="' + result[i]['cproducto'] + '_Unidad' + '" /></td>' +
+'<td><input class="col-sm-12" id="' + result[i]['cproducto'] + '_DescFijo' + '" /></td>' +
+'<td><input class="col-sm-12" id="' + result[i]['cproducto'] + '_Desc2' + '" /></td>' +
+'<td><input class="col-sm-12" id="' + result[i]['cproducto'] + '_Desc3' + '" /></td></tr>';
+    }
+    $("#tbl_body tr").remove().ready($("#tbl_body").append(prin));
+    Ver3();
+} 
+</script>
+
+           
+</div>
+
+

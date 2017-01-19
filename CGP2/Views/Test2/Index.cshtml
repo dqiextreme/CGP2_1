@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+   
+<div class="jumbotron text-center">
+  <h1>Pruebas de Cliente</h1>
+  <p>Resize this responsive page to see the effect!</p>
+   
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="modal1()" > Lista </button>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal2" onclick="modal2()" > Lista2 </button>
+</div>
+  
+<div class="container">
+      @*<table class="table">*@
+    <table class="table table-striped table-bordered table-list">
+    <thead>
+      <tr>
+          <th></th><th>Producto</th><th>Descripción</th><th>PMV</th><th>Cajas</th><th>Unidad</th><th>DescFijo</th><th>Desc2</th><th>Desc3</th>
+      </tr>
+    </thead>
+    <tbody id="linea2">
+
+    </tbody>
+  </table>
+    <button type="button" class="btn btn-info btn-lg" onclick="Generar_lst()" > Validar </button>
+    <button type="button" class="btn btn-info btn-lg" onclick="Json_Res()" > Remove </button>
+
+</div>
+
+@*<div class="modal fade" id="myModal" role="dialog" > </div>*@
+<div class="modal fade" id="myModal2" role="dialog" > </div>
+
+
+
+<script type="text/javascript">
+    function Json_Res() {
+        $.ajax({
+            url: '/Test2/_Product_t1/',
+            data: { id: "" },
+            type: "POST",
+        }).done(function (result) {
+            $(result).each(function () {
+                $(this["res"]).each(function (ind, ele) {
+                    alert(ele["cproducto"]);
+                });
+
+                this["res"].forEach(function (ele, ind) {
+                    alert(JSON.stringify(ele));
+                });
+                
+            });
+        });
+    }
+
+    $(document).ready(function () {
+            $.ajax({
+                url: '/Test2/load1/',
+                data: { id: "" },
+                type: "GET",
+            }).done(alert("done"));
+    });
+
+
+
+
+
+
+
+    //call modal
+    var modal1 = 0;
+    function modal2() {
+        if (modal1 == 0) {
+            $.ajax({
+                url: '/Test2/_Product_Client_Modal/',
+                data: { id: "" },
+                type: "GET",
+            }).done(function (result) { $("#myModal2 div").remove().ready($("#myModal2").append(result)); });
+        }
+        modal1 = 1;
+    }
+    //call modal
+
+    //gen lst
+    var res = [];
+    function Generar_lst() {
+        res = [];
+        $("#linea2").find('tr').each(function (i) {
+            var $tds = $(this).find('td');
+            var res2 = {
+                "cproducto": $tds.eq(0).text().trim(),
+                "ccompany": $tds.eq(1).text().trim(),
+                "cvendedor": $tds.eq(2).text().trim(),
+                "cproducto": $tds.eq(3).text().trim(),
+                "cnamefc": $tds.eq(4).text().trim(),
+                "ccostobruto_u1": $tds.eq(5).text().trim(),
+                "cprecioventamax": $("#" + $tds.eq(0).text().trim() + "_c_nomb").val(),
+                "c_nomb_comer": $("#" + $tds.eq(0).text().trim() + "_cname").val()
+                //"cprecioventamax": $tds.eq(6).text().trim(),
+                //"c_nomb_comer": $tds.eq(7).text().trim()
+                //"c_nomb_comer": $("#" + $tds.eq(0).text().trim() + "_c_nomb_comer").val()
+            };
+            res.push(res2);
+        });
+        //alert(JSON.stringify(res));
+        Vali();
+    }
+    function Vali() {
+        var Json1 = res;
+        var js1 = JSON.stringify(Json1);
+        //alert(js1);
+        $.ajax({
+            url: '/Test3/prodtest/',
+            data: { js: js1 },
+            type: "POST",
+        }).done(function (data) {
+            for (var i = 0; i < data.length; i++) {
+                //$("#" + data[i]).remove();
+                $("#" + data[i]).find('td').eq(8).css("background-color", "#b3b3b3").append("Error");
+            }
+        });
+    }
+    //gen lst
+
+    function Rem() {
+        //css("background-color", "#ff1a1a")
+        $("#010114080").find('td').eq(8).css("background-color", "#b3b3b3").append("test");
+        
+        //var td1 = $("#010114080").find('td');
+        //for (var i = 0; i < td1.length; i++) {
+            
+        //    td1.eq(i).append("fuck");
+        //}
+    }
+    function Rem2(re) {
+        
+        //$("#010114080").find('td').eq(8).css("background-color", "#b3b3b3").append("test");
+        //$("#" + re).find('td').eq(1).css("background-color", "#b3b3b3").append("test");
+        $("#" + re).find('td').eq(3).css("background-color", "#b3b3b3");
+        //alert(a);
+    }
+    //document.getElementById('tbl_body').deleteRow(this)
+    //---------------------
+
+    //$(document).ready(function () {
+    //    if (modal1 == 0) {
+    //        $.ajax({
+    //            url: '/Test2/_Product_Client_Modal/',
+    //            data: { id: "" },
+    //            type: "GET",
+    //        }).done(function (result) { $("#myModal2 div").remove().ready($("#myModal2").append(result)); });
+    //    }
+    //    modal1 = 1;
+    //});
+</script>
+
+
+@*@Scripts.Render("~/js_test/func.js")*@
+@*<script type="text/javascript">
+var count = 1;
+
+function modal1() {
+    $.ajax({
+        url: '/Test/ModalTestPartial/',
+        data: { id: count },
+        type: "GET",
+    }).done(function (result) {
+        $("#myModal div").remove().ready($("#myModal").append(result));
+        count++;
+    });
+}
+
+function modal2() {
+    $.ajax({
+        url: '/Test/ModalTestPartial2/',
+        data: { id: count },
+        type: "GET",
+    }).done(function (result) {
+        $("#modal2_partial div").remove().ready($("#modal2_partial").append(result));
+        count++;
+    });
+}
+</script>*@

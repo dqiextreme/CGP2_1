@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+   
+<div class="jumbotron text-center">
+  <h1>Pruebas de Cliente</h1>
+  <p>Resize this responsive page to see the effect!</p>
+   
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Modal_Prod_Id" onclick="Modal_Prod()" > Lista2 </button>
+</div>
+  
+<div class="container">
+      @*<table class="table">*@
+    <table class="table table-striped table-bordered table-list">
+    <thead>
+      <tr>
+          <th></th><th>Producto</th><th>Descripción</th><th>PMV</th><th>Cajas</th><th>Unidad</th><th>DescFijo</th><th>Desc2</th><th>Desc3</th><th>Observ.</th>
+      </tr>
+    </thead>
+    <tbody id="Prod_Tbody">
+
+    </tbody>
+  </table>
+    @*<div id="Tbl_Result" style="text-align:center">*@
+        <h4 id="Tbl_Result" style="text-align:center; width:100%;"></h4>
+
+    @*</div>*@
+    <button type="button" class="btn btn-info btn-lg" onclick="Generar_lst()" > Validar </button>
+    <button type="button" class="btn btn-info btn-lg" onclick="Carga1()" > Procesar </button>
+
+</div>
+
+<div class="modal fade" id="Modal_Prod_Id" role="dialog" > </div>
+
+
+<script src="/Func_Js/CargaCJS.js"></script>

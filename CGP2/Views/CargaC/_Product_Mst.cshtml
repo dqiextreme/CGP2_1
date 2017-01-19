@@ -1,0 +1,223 @@
+﻿@{
+
+    List<CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA> Lista = new List<CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA>();
+    Lista = ViewBag.List;
+
+    List<CGP2_1.Clase.Prod_Desc_Json.prod_desc3> Lista2 = ViewBag.List2;
+
+
+
+    //genero el JSON maestro
+    var JResult = Newtonsoft.Json.JsonConvert.SerializeObject(Lista);
+}
+
+<div id="dial" style="width:90%; max-height: 90%;" class="modal-dialog">
+    
+<div class="modal-content" style="text-align:center;">
+    <div class="modal-header-xs">
+        <div class="pagination pagination-xs" style="max-width:90%;">
+            <h4 class="modal-title">Client</h4>
+            
+            @for (int i = 1; i < ((Lista.Count / 10) + 1); i++)
+            {
+                <li><a onclick="pag(@i)">@i</a></li>
+            }
+        </div>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+
+<!----table------------------------------------------------------------------------------------->
+<div class="table-responsive">
+  <table class="table ">
+    <thead>
+      <tr>
+        <th style="width:10%;">Producto</th>
+        <th style="width:45%;">Descripcion</th>
+        <!--inputs-->
+        <th style="width:10%;">PMV</th>
+        <th style="width:7%;">Cajas</th>
+        <th style="width:7%;">Unidad</th>
+        <th style="width:7%;">DescFijo</th>
+        <th style="width:7%;">Desc2</th>
+        <th style="width:7%;">Desc3</th>
+      </tr>
+    </thead>
+    <tbody id="tbl_body">
+        
+        @foreach (var p in Lista2.Take(10).ToList())
+        {
+            <tr style="text-align:justify;" id="@p.ProductoC.ToString().Trim()">
+                <td>
+                    <button id="@string.Concat("btn", @p.ProductoC.ToString().Trim())" type="button" class="btn-xs btn-info btn-sm" 
+                        onclick="add_m_list('@p.ProductoC.ToString().Trim()')" > 
+                    @p.ProductoC.ToString().Trim() </button>
+                </td>
+                
+                <td>@p.res.Take(1).Single().cnamefc</td>
+                <!--inputs-->
+                @if (p.res.Count == 1)
+                {
+                    <td>@p.res.Take(1).Single().cprecioventamax</td>
+                }
+                else
+                {
+                    <td class="dropdown">
+                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Selec.</a>
+                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                            @foreach (var pp in @p.res)
+                            {
+                                <li><a onclick="Pmv_Sel('@pp.cproducto.ToString().Trim()', '@pp.cprecioventamax.ToString().Trim()')">@pp.cprecioventamax</a></li>
+                            }
+                        </ul>
+                    </td>
+                }
+                    <td><input class="col-sm-12 pad" id="@string.Concat(@p.res.Take(1).Single().cproducto.ToString(), "_cajas")" /></td>
+                    <td><input class="col-sm-12 pad" id="@string.Concat(@p.res.Take(1).Single().cproducto.ToString(), "_unidad")" /></td>
+                    <td><input class="col-sm-12 pad" id="@string.Concat(@p.res.Take(1).Single().cproducto.ToString(), "_descfijo")" /></td>
+                    <td><input class="col-sm-12 pad" id="@string.Concat(@p.res.Take(1).Single().cproducto.ToString(), "_desc2")" /></td>
+                    <td><input class="col-sm-12 pad" id="@string.Concat(@p.res.Take(1).Single().cproducto.ToString(), "_desc3")" /></td>
+            </tr>
+        }
+       
+    </tbody>
+      
+  </table>
+</div>
+<!----table------------------------------------------------------------------------------------->        
+
+</div>
+    
+    @*<div class="modal-footer">
+        <button type="button" class="btn-xs btn-default" data-dismiss="modal">Close</button>
+    </div>*@
+</div>
+<script>
+    function Pmv_Sel(idp, val)
+    {
+        $("#" + idp).find('td').eq(2).replaceWith("<td>" + val + "</td>");
+    }
+
+    function Ver3(){
+        var arr = a1json.map(function (el) { return el.cproducto; });
+
+        $("#tbl_body").find('tr').each(function () {
+            var codp = $(this).find('td').eq(0).text().trim();
+            //if ($.inArray(codp, a1) != -1){
+            if ($.inArray(codp, a1json.map(function (el) { return el.cproducto; })) != -1){
+                var repl = $(a1json).filter(function (a,b) { return b.cproducto == codp.toString().trim(); } );
+                $("#tbl_body > #" + codp).find('td').eq(0).replaceWith("<td>" + codp + "</td>");
+                $("#tbl_body > #" + codp).find('td').eq(3).replaceWith("<td>" + repl[0].cajas + "</td>");
+                $("#tbl_body > #" + codp).find('td').eq(4).replaceWith("<td>" + repl[0].unidad + "</td>");
+                $("#tbl_body > #" + codp).find('td').eq(5).replaceWith("<td>" + repl[0].descfijo + "</td>");
+                $("#tbl_body > #" + codp).find('td').eq(6).replaceWith("<td>" + repl[0].desc2 + "</td>");
+                $("#tbl_body > #" + codp).find('td').eq(7).replaceWith("<td>" + repl[0].desc3 + "</td>");
+            }
+        });
+    }
+
+    //var a1 = [];
+    var a1json = [];
+    function Ver2(cproducto) {
+        //if ($.inArray(cproducto, a1) == -1) {
+        //a1.push(cproducto);
+        if ($.inArray(cproducto, a1json.map(function (el) { return el.cproducto; })) == -1) {
+            $("#tbl_body > #" + cproducto).find('td').eq(0).replaceWith("<td>" + cproducto + "</td>");
+            var a3 = $("#" + cproducto + "_cajas").val().trim();
+            var a4 = $("#" + cproducto + "_unidad").val().trim();
+            var a5 = $("#" + cproducto + "_descfijo").val().trim();
+            var a6 = $("#" + cproducto + "_desc2").val().trim();
+            var a7 = $("#" + cproducto + "_desc3").val().trim();
+            $("#tbl_body > #" + cproducto).find('td').eq(3).replaceWith("<td>" + a3 + "</td>");
+            $("#tbl_body > #" + cproducto).find('td').eq(4).replaceWith("<td>" + a4 + "</td>");
+            $("#tbl_body > #" + cproducto).find('td').eq(5).replaceWith("<td>" + a5 + "</td>");
+            $("#tbl_body > #" + cproducto).find('td').eq(6).replaceWith("<td>" + a6 + "</td>");
+            $("#tbl_body > #" + cproducto).find('td').eq(7).replaceWith("<td>" + a7 + "</td>");
+
+            a1json.push({
+                "cproducto": cproducto,
+                "cajas": a3,
+                "unidad": a4,
+                "descfijo": a5,
+                "desc2": a6,
+                "desc3": a7
+            });
+            return true;
+        }else{ return false; }
+    }
+
+    function add_m_list(cproducto) {
+        //var tesres = 1 > 0 && 2 == 3 ? 1 : 2;
+        var Desc = $("#tbl_body > #" + cproducto).find('td').eq(1).text().trim();
+        var PMV = $("#tbl_body > #" + cproducto).find('td').eq(2).text().trim();
+        var Cajas = $("#" + cproducto + "_cajas").val();
+        var Unidad = $("#" + cproducto + "_unidad").val();
+        //---
+        Cajas = Cajas.length > 0 ? Cajas : 0;
+        Unidad = Unidad.length > 0 ? Unidad : 0;
+
+        if (Ver2(cproducto)) {
+            "<th></th><th>Producto</th><th>Descripción</th><th>PMV</th><th>Cajas</th><th>Unidad</th><th>DescFijo</th><th>Desc2</th><th>Desc3</th>"
+            $("#Prod_Tbody").append("<tr id=\"" + cproducto +"\">"+
+                            "<td>" +
+                            "<a class=\"glyphicon glyphicon glyphicon-pencil\" onclick=\"Edit('"+ cproducto +"')\"></a> - " + 
+                            "<a class=\"glyphicon glyphicon-remove\" onclick=\"Remove('"+ cproducto +"')\"></a>" + 
+                            "</td>" +
+                            "<td>" + cproducto + "</td>" +
+                            "<td>" + Desc + "</td>" +
+                            "<td>" + PMV + "</td>" +
+                            "<td>" + Cajas + "</td>" +
+                            "<td>" + Unidad + "</td>" +
+                            "<td>_descfijo</td>" +
+                            "<td>_desc2</td>" +
+                            "<td>_desc3</td>" +
+                            "<td>Obser.</td>" +
+                            "</tr>");
+            //"<td>" + cname + "</td></tr>");
+        }
+    }
+    function pag(pos) {
+        var sk = ((pos - 1 ) * 10); var ta = sk + 10;
+
+        var result = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Lista2));
+        
+        var prin = "";
+       for (var i = sk; i < ta; i++) {
+                prin += '<tr style="text-align:justify;" id="' + result[i]["ProductoC"] + '">' +
+                        '<td><button id="' + 'btn' + result[i]["ProductoC"] + '" type="button" class="btn-xs btn-info btn-sm" onclick="add_m_list(\'' + result[i]["ProductoC"] + '\')" >' + result[i]["ProductoC"] + '</button></td>' + 
+                        '<td>' + result[i]["res"][0]["cnamefc"] + '</td>';
+                    if (result[i]["res"].length == 1) {
+               
+                        prin += '<td>' + result[i]["res"][0]["ccostobruto_u1"] + '</td>';
+                    }else{
+                    
+                        prin += '<td class="dropdown">' +
+                        '<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Selec.</a>' +
+                        '<ul class="dropdown-menu" aria-labelledby="dLabel">';
+                            $(result[i]["res"]).each(function (ind, ele){
+                                alert("2.2.1");
+                                prin += '<li><a onclick="Pmv_Sel(\'' + ele["cproducto"] + '\', \'' + ele["ccostobruto_u1"] + '\')">' + ele["ccostobruto_u1"] + '</a></li>';
+                            });
+                        prin += '</ul></td> ';
+                    }
+                prin += '<td><input class="col-sm-12 pad" id="' + result[i]["res"][0]["cproducto"] + '_cajas' + '")" /></td>' +
+                        '<td><input class="col-sm-12 pad" id="' + result[i]["res"][0]["cproducto"] + '_unidad' + '")" /></td>' +
+                        '<td><input class="col-sm-12 pad" id="' + result[i]["res"][0]["cproducto"] + '_descfijo' + '")" /></td>' +
+                        '<td><input class="col-sm-12 pad" id="' + result[i]["res"][0]["cproducto"] + '_desc2' + '")" /></td>' +
+                        '<td><input class="col-sm-12 pad" id="' + result[i]["res"][0]["cproducto"] + '_desc3' + '")" /></td>' +
+                        '</tr>';
+       }
+   
+        $("#tbl_body tr").remove().ready($("#tbl_body").append(prin));
+    Ver3();
+} 
+</script>
+    
+<style>
+    .pad {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+</style>
+           
+</div>

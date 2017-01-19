@@ -1,0 +1,172 @@
+﻿@{
+    List<CGP2_1.Models.VST_T3_JOEC_PROD> lstt = new List<CGP2_1.Models.VST_T3_JOEC_PROD>();
+    lstt = ViewBag.list1;
+
+    var ls1 = lstt.Skip(0).Take(10).ToList();
+    
+    var pagin = lstt.Count / 10;
+    
+    //genero el JSON maestro
+    var lst1 = lstt.Select(x => new {
+        id = x.cproducto, values = new {
+            cproducto = x.cproducto, c_nomb_comer = x.c_nomb_comer, ccompany = x.ccompany, ccostobruto_u1 = x.ccostobruto_u1, cname = x.cname, cnamefc = x.cnamefc, cprecioventamax = x.cprecioventamax
+        }
+    }).ToList();
+    var lst21 = Newtonsoft.Json.JsonConvert.SerializeObject(lst1);
+
+    /////
+    var rep = lst1.Select(x => x.values).ToList();
+    var rep2 = Newtonsoft.Json.JsonConvert.SerializeObject(rep);
+   
+}
+@*<div id="dial" class="modal-dialog">*@
+<div id="dial" style="width:90%;" class="modal-dialog">
+    
+<div class="modal-content">
+    <div class="modal-header pagination pagination-sm">@*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+        
+
+  
+    <li>
+      <a href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+
+        @for (int i = 1; i < pagin + 1; i++)
+        {
+            <li><a onclick="pag(@i)">@i</a></li>
+        }
+    
+        <li>
+      <a href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  
+
+        
+        
+    
+    
+
+
+    </div><div class="modal-body">
+
+<!----table------------------------------------------------------------------------------------->
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>cproducto</th>
+        <th>cnamefc</th>
+        <th>ccostobruto_u1</th>
+        <th>cprecioventamax</th>
+        <th>c_nomb_comer</th>
+        <th>cname</th>
+        <th>ccompany</th>
+      </tr>
+    </thead>
+    <tbody id="fuck_here">
+
+        
+        @*@foreach (var p in ls1)
+        {
+          <tr id="'@p.cproducto.ToString()'">
+              <td>
+                  <button type="button" class="btn btn-info btn-sm" onclick="add3('@p.cproducto','@p.cnamefc','@p.ccostobruto_u1','@p.cprecioventamax','@p.c_nomb_comer','@p.cname')" > '@p.cproducto.ToString()' </button>
+              </td>
+              <td>@p.cnamefc</td>
+              <td>@p.ccostobruto_u1</td>
+              <td>@p.cprecioventamax</td>
+              <td>@p.c_nomb_comer</td>
+              <td>@p.cname</td>
+              <td>@p.ccompany</td>
+              <!--<td><button type="button" class="btn btn-info btn-sm" onclick="f3('@p.cproducto')" > agregar </button></td>-->
+          </tr>
+        }*@
+    </tbody>
+      
+  </table>
+</div>
+<!----table------------------------------------------------------------------------------------->        
+
+</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div>
+      
+</div>
+<script>
+    function pag(pos)
+    {
+        var sk = (pos - 1 ) * 10; var ta = 10;
+        
+        @*var arr = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(lst1.Select(x => x.values).ToList().Skip(10).Take(10).ToList()));
+        for (var i = 0; i < arr.length; i++) {
+            alert(arr[i]["cproducto"]);
+        }*@
+        
+        @*var a = '@Newtonsoft.Json.JsonConvert.SerializeObject(rep)';*@
+        var result = @Html.Raw(rep2);
+
+        $("#fuck_here tr").remove();
+
+        for (var i = sk; i < sk + 10; i++) {
+            $("#fuck_here").append('<tr>' +
+                '<td><button type="button" class="btn btn-info btn-sm" onclick="add3(' + 
+                result[i]['cproducto'] + ')" >' + result[i]['cproducto'] + '</button></td>' +
+                            '<td>' + result[i]['cproducto'] + '</td>' +
+                            '<td>' + result[i]['cnamefc'] + '</td>' +
+                            '<td>' + result[i]['ccostobruto_u1'] + '</td>' +
+                            '<td>' + result[i]['cprecioventamax'] + '</td>' +
+                            '<td>' + result[i]['c_nomb_comer'] + '</td>' +
+                            '<td>' + result[i]['cname'] + '</td></tr>');
+        }
+        
+        //$("#fuck_here").append("<tr>" +
+        //        "<td><button type='button' class='btn btn-info btn-sm' onclick='add3(" + 
+        //        result[i]["cproducto"] + ", " +
+        //        result[i]["cnamefc"] + ", " +
+        //        result[i]["ccostobruto_u1"] + ", " +
+        //        result[i]["cprecioventamax"] + ", " +
+        //        result[i]["c_nomb_comer"] + ", " +
+        //        result[i]["cname"] + ")' >" + result[i]["cproducto"] + "</button></td>" +
+        //                    "<td>" + result[i]["cproducto"] + "</td>" +
+        //                    "<td>" + result[i]["cnamefc"] + "</td>" +
+        //                    "<td>" + result[i]["ccostobruto_u1"] + "</td>" +
+        //                    "<td>" + result[i]["cprecioventamax"] + "</td>" +
+        //                    "<td>" + result[i]["c_nomb_comer"] + "</td>" +
+        //                    "<td>" + result[i]["cname"] + "</td></tr>");
+        
+
+        
+    }
+
+    function add3(cproducto,cnamefc,ccostobruto_u1,cprecioventamax,c_nomb_comer,cname) {
+        $("#linea2").append("<tr>" + 
+                            "<td>" + cproducto + "</td>" +
+                            "<td>" + cnamefc + "</td>" +
+                            "<td>" + ccostobruto_u1 + "</td>" +
+                            "<td>" + cprecioventamax + "</td>" +
+                            "<td>" + c_nomb_comer + "</td>" +
+                            "<td>" + cname + "</td></tr>");
+    }
+
+    function f3(prod){
+        var result = findarr(@Html.Raw(lst21), prod);
+
+        $("#linea2").append("<tr>" + 
+                            "<td>" + result["cproducto"] + "</td>" +
+                            "<td>" + result["cnamefc"] + "</td>" +
+                            "<td>" + result["ccostobruto_u1"] + "</td>" +
+                            "<td>" + result["cprecioventamax"] + "</td>" +
+                            "<td>" + result["c_nomb_comer"] + "</td>" +
+                            "<td>" + result["cname"] + "</td></tr>");
+    }
+
+    function findarr(arr, key){
+        for (var z = 0; z < arr.length; z++) { 
+            if (arr[z]["id"] == key) {
+                return arr[z]["values"];
+            }
+        }
+    }
+</script>

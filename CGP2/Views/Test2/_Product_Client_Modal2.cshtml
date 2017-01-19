@@ -1,0 +1,163 @@
+﻿@{
+
+    List<CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA> Lista = new List<CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA>();
+    Lista = ViewBag.List;
+
+    //genero el JSON maestro
+    var JList = Lista.Select(x => new CGP2_1.Models.VST_T3_PRODUCTO_DESCARGA
+    {
+        ccompany = x.ccompany,
+        cvendedor = x.cvendedor,
+        cproducto = x.cproducto,
+        cnamefc = x.cnamefc,
+        ccostobruto_u1 = x.ccostobruto_u1,
+        cprecioventamax = x.cprecioventamax,
+        c_nomb_comer = x.c_nomb_comer,
+        cname = x.cname
+    }).ToList();
+
+    var JResult = Newtonsoft.Json.JsonConvert.SerializeObject(JList);
+}
+@*<div id="dial" class="modal-dialog">*@
+@*style="max-height: 240px ;overflow-y: scroll; display: none;"*@
+@*<div id="dial" style="width:90%; max-height: 90%; overflow-y: scroll;" class="modal-dialog">*@
+<div id="dial" style="width:90%; max-height: 90%;" class="modal-dialog">
+    
+<div class="modal-content" style="text-align:center;">
+    <div class="modal-header-xs">
+        <div class="pagination pagination-xs">
+            <h4 class="modal-title">Client</h4>
+        
+            @for (int i = 1; i < ((Lista.Count / 10) + 1); i++)
+            {
+                <li><a onclick="pag(@i)">@i</a></li>
+            }
+        </div>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+
+<!----table------------------------------------------------------------------------------------->
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>cproducto</th>
+          @*<th><input type="text" id="val1" value="cproducto"/></th>*@
+        <th>ccompany</th>
+        <th>cvendedor</th>
+        <th>cproducto</th>
+        <th>cnamefc</th>
+        <th>ccostobruto_u1</th>
+        <th>cprecioventamax</th>
+        <th>c_nomb_comer</th>
+        <th>cname</th>
+      </tr>
+    </thead>
+    <tbody id="tbl_body">
+        @foreach (var p in JList.Take(10).ToList())
+        {
+            <tr style="text-align:justify;" id="@p.cproducto.ToString().Trim()">
+              <td>
+                  @*<button type="button" class="btn btn-info btn-sm" onclick="add_m_list('@p.ccompany', '@p.cvendedor', '@p.cproducto', '@p.cnamefc', '@p.ccostobruto_u1', '@p.cprecioventamax', '@p.c_nomb_comer', '@p.cname'); javascript:document.getElementById('tbl_body').deleteRow(this); " > *@
+                  <button id="@string.Concat("btn",@p.cproducto.ToString())" type="button" class="btn-xs btn-info btn-sm" onclick="add_m_list('@p.ccompany', '@p.cvendedor', '@p.cproducto', '@p.cnamefc', '@p.ccostobruto_u1', '@p.cprecioventamax', '@p.c_nomb_comer', '@p.cname')" > 
+                      @p.cproducto.ToString() </button>
+                      @*<button type="button" class="btn btn-info btn-sm" onclick="javascript:document.getElementById('tbl_body').deleteRow(this);" > @p.cproducto.ToString() </button>*@
+              </td>
+                <td>@p.ccompany</td>
+                <td>@p.cvendedor</td>
+                <td>@p.cproducto</td>
+                <td>@p.cnamefc</td>
+                <td>@p.ccostobruto_u1</td>
+                <td>@p.cprecioventamax</td>
+                <td>@p.c_nomb_comer</td>
+                <td>@p.cname</td>
+                @*gen json master*@
+              @*<td><button type="button" class="btn btn-info btn-sm" onclick="t1('@p.ccompany', '@p.cvendedor', '@p.cproducto', '@p.cnamefc', '@p.ccostobruto_u1', '@p.cprecioventamax', '@p.c_nomb_comer', '@p.cname')" > agregar </button></td>*@
+          </tr>
+        }
+    </tbody>
+      
+  </table>
+</div>
+<!----table------------------------------------------------------------------------------------->        
+
+</div>
+    
+    @*<div class="modal-footer">
+        <button type="button" class="btn-xs btn-default" data-dismiss="modal">Close</button>
+    </div>*@
+</div>
+<script>
+    function Ver3(){
+        $("#tbl_body").find('tr').each(function () {
+            if ($.inArray($(this).find('td').eq(3).text().trim(),a1) != -1){
+                $("#tbl_body > #" + rev).find('td').eq(0).replaceWith("<td>" + rev + "</td>");
+            }});
+    }
+
+
+    var a1 = [];
+    function Ver2(cproducto) {
+        if ($.inArray(cproducto, a1) == -1) {
+            a1.push(cproducto);
+            $("#tbl_body > #" + cproducto).find('td').eq(0).replaceWith("<td>" + cproducto + "</td>");
+            return true;
+        }else{ return false; }
+    }
+
+    function add_m_list(ccompany, cvendedor, cproducto, cnamefc, ccostobruto_u1, cprecioventamax, c_nomb_comer, cname) {
+        if (Ver2(cproducto)) {
+            $("#linea2").append("<tr id=\"" + cproducto +"\"><td>" + cproducto + "</th>" +
+                            "<td>" + ccompany + "</th>" +
+                            "<td>" + cvendedor + "</th>" +
+                            "<td>" + cproducto + "</th>" +
+                            "<td>" + cnamefc + "</th>" +
+                            "<td>" + ccostobruto_u1 + "</th>" +
+                            "<td>" + cprecioventamax + "</th>" +
+                            //"<td><input class=\"col-sm-12\" id=\"" + cproducto + "_c_nomb" + "\" /></td>" +
+                            //"<td><input class=\"col-sm-12\" id=\"" + cproducto + "_cname" + "\" /></td></tr>");
+            //"<td><input class=\"form-control col-sm-12\" id=\"" + cproducto + "_cname" + "\"/></td></tr>");
+            "<td>" + c_nomb_comer + "</th>" +
+            "<td></td></tr>");
+            //"<td>" + cname + "</td></tr>");
+        }
+}
+
+//paginacion
+function pag(pos) {
+    var sk = ((pos - 1 ) * 10); 
+    var ta = sk + 10;
+
+    var result = @Html.Raw(JResult);
+    var prin = "";
+    for (var i = sk; i < ta; i++) {
+            prin += '<tr style="text-align:justify;" id="' + result[i]['cproducto'] + '">' +
+            '<td><button id="btn' + result[i]['cproducto'] + '" type="button" class="btn-xs btn-info btn-sm" onclick="add_m_list(\'' + 
+            result[i]['ccompany'] + '\', \'' +
+            result[i]['cvendedor'] + '\', \'' +
+            result[i]['cproducto'] + '\', \'' +
+            result[i]['cnamefc'] + '\', \'' +
+            result[i]['ccostobruto_u1'] + '\', \'' +
+            result[i]['cprecioventamax'] + '\', \'' +
+            result[i]['c_nomb_comer'] + '\', \'' +
+            result[i]['cname'] + '\')" >' +
+            result[i]['cproducto'] + '</button></td>' +
+                        '<td>' + result[i]['ccompany'] + '</td>' +
+                        '<td>' + result[i]['cvendedor'] + '</td>' +
+                        '<td>' + result[i]['cproducto'] + '</td>' +
+                        '<td>' + result[i]['cnamefc'] + '</td>' +
+                        '<td>' + result[i]['ccostobruto_u1'] + '</td>' +
+                        '<td>' + result[i]['cprecioventamax'] + '</td>' +
+                        '<td>' + result[i]['c_nomb_comer'] + '</td>' +
+                        '<td>' + result[i]['cname'] + '</td></tr>';
+    }
+    $("#tbl_body tr").remove().ready($("#tbl_body").append(prin));
+    Ver3();
+} 
+</script>
+
+           
+</div>
+
+
