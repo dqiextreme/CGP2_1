@@ -93,6 +93,40 @@
     </div>*@
 </div>
 <script>
+    //----Mod Index
+    function add_m_list(cproducto) {
+        //var tesres = 1 > 0 && 2 == 3 ? 1 : 2;
+        var Desc = $("#tbl_body > #" + cproducto).find('td').eq(1).text().trim();
+        var PMV = $("#tbl_body > #" + cproducto).find('td').eq(2).text().trim();
+        var Cajas = $("#" + cproducto + "_cajas").val();
+        var Unidad = $("#" + cproducto + "_unidad").val();
+        //---
+        Cajas = Cajas.length > 0 ? Cajas : 0;
+        Unidad = Unidad.length > 0 ? Unidad : 0;
+
+        if (Ver2(cproducto)) {
+            "<th></th><th>Producto</th><th>Descripción</th><th>PMV</th><th>Cajas</th><th>Unidad</th><th>DescFijo</th><th>Desc2</th><th>Desc3</th>"
+            $("#Prod_Tbody").append("<tr id=\"" + cproducto +"\">"+
+                            "<td>" +
+                            "<a class=\"glyphicon glyphicon glyphicon-pencil\" onclick=\"Edit('"+ cproducto +"')\"></a> - " + 
+                            "<a class=\"glyphicon glyphicon-remove\" onclick=\"Remove('"+ cproducto +"')\"></a> - " + 
+                            "<a class=\"glyphicon glyphicon-ok\" onclick=\"Ok('"+ cproducto +"')\"></a>" + 
+                            "</td>" +
+                            "<td>" + cproducto + "</td>" +
+                            "<td>" + Desc + "</td>" +
+                            "<td>" + PMV + "</td>" +
+                            "<td>" + Cajas + "</td>" +
+                            "<td>" + Unidad + "</td>" +
+                            "<td>_descfijo</td>" +
+                            "<td>_desc2</td>" +
+                            "<td>_desc3</td>" +
+                            "<td>Obser.</td>" +
+                            "</tr>");
+            //"<td>" + cname + "</td></tr>");
+        }
+    }
+    //----Mod Index
+
     function Pmv_Sel(idp, val)
     {
         $("#" + idp).find('td').eq(2).replaceWith("<td>" + val + "</td>");
@@ -146,36 +180,7 @@
         }else{ return false; }
     }
 
-    function add_m_list(cproducto) {
-        //var tesres = 1 > 0 && 2 == 3 ? 1 : 2;
-        var Desc = $("#tbl_body > #" + cproducto).find('td').eq(1).text().trim();
-        var PMV = $("#tbl_body > #" + cproducto).find('td').eq(2).text().trim();
-        var Cajas = $("#" + cproducto + "_cajas").val();
-        var Unidad = $("#" + cproducto + "_unidad").val();
-        //---
-        Cajas = Cajas.length > 0 ? Cajas : 0;
-        Unidad = Unidad.length > 0 ? Unidad : 0;
-
-        if (Ver2(cproducto)) {
-            "<th></th><th>Producto</th><th>Descripción</th><th>PMV</th><th>Cajas</th><th>Unidad</th><th>DescFijo</th><th>Desc2</th><th>Desc3</th>"
-            $("#Prod_Tbody").append("<tr id=\"" + cproducto +"\">"+
-                            "<td>" +
-                            "<a class=\"glyphicon glyphicon glyphicon-pencil\" onclick=\"Edit('"+ cproducto +"')\"></a> - " + 
-                            "<a class=\"glyphicon glyphicon-remove\" onclick=\"Remove('"+ cproducto +"')\"></a>" + 
-                            "</td>" +
-                            "<td>" + cproducto + "</td>" +
-                            "<td>" + Desc + "</td>" +
-                            "<td>" + PMV + "</td>" +
-                            "<td>" + Cajas + "</td>" +
-                            "<td>" + Unidad + "</td>" +
-                            "<td>_descfijo</td>" +
-                            "<td>_desc2</td>" +
-                            "<td>_desc3</td>" +
-                            "<td>Obser.</td>" +
-                            "</tr>");
-            //"<td>" + cname + "</td></tr>");
-        }
-    }
+    
     function pag(pos) {
         var sk = ((pos - 1 ) * 10); var ta = sk + 10;
 
@@ -209,8 +214,49 @@
        }
    
         $("#tbl_body tr").remove().ready($("#tbl_body").append(prin));
-    Ver3();
-} 
+        Ver3();
+        re_ver();
+    } 
+
+
+
+    function re_ver()
+    {   
+        //en modal
+        var Moda = [];
+        Moda = $("#tbl_body tr").each(function() { 
+            return this; 
+        });
+
+        //$(Moda).each(function (ind,ele)
+        //{
+        //    var a1 = $(ele).find('td').eq(0).text().trim();
+        //    alert(ind + " - " + a1);
+        //});
+
+        //en index
+        var Inde = [];
+        Inde = $("#Prod_Tbody tr").each(function() { 
+            //return $(this).find('td').eq(1).text().trim(); 
+            return this; 
+        });
+        
+        //requerido
+        $(Moda).each(function (ind, ele)
+        {
+            var cproducto = $(ele).find('td').eq(0).text().trim();
+            if ($.grep(Inde, function(e){ if ($(e).find('td').eq(1).text().trim() === cproducto) { return e; } }).length === 0 ) {
+                $(ele).find('td').eq(0).replaceWith('<td><button id="' + 'btn' + cproducto + '" type="button" class="btn-xs btn-info btn-sm" onclick="add_m_list(\'' + cproducto + '\')" > ' + cproducto + ' </button></td>');
+                $(ele).find('td').eq(3).replaceWith('<td><input class="col-sm-12 pad" id="' + cproducto + '_cajas' + '"/></td>');
+                $(ele).find('td').eq(4).replaceWith('<td><input class="col-sm-12 pad" id="' + cproducto + '_unidad' + '"/></td>');
+                $(ele).find('td').eq(5).replaceWith('<td><input class="col-sm-12 pad" id="' + cproducto + '_descfijo' + '"/></td>');
+                $(ele).find('td').eq(6).replaceWith('<td><input class="col-sm-12 pad" id="' + cproducto + '_desc2' + '"/></td>');
+                $(ele).find('td').eq(7).replaceWith('<td><input class="col-sm-12 pad" id="' + cproducto + '_desc3' + '"/></td>');
+                $.grep(a1json, function(ele, ind){ if (ele.cproducto === cproducto) { a1json.splice(ind,1); } });
+            }
+        });
+    }
+
 </script>
     
 <style>

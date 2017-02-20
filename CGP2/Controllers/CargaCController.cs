@@ -609,18 +609,21 @@ namespace CGP2_1.Controllers
                                                      .ToList();
                          //Si solo hay un Pmv, lo asignamos por defecto
                          if (productoPmvs.Count() == 1)
+                         {
                              x.Pmv = productoPmvs.Single().cprecioventamax.ToString();
 
-                         //Pasamos la lista a la página
-                         TempData["PmvList" + x.ProductoID] = new SelectList(productoPmvs, "cprecioventamax", "cprecioventamax", x.Pmv);
+                             //Pasamos la lista a la página
+                             TempData["PmvList" + x.ProductoID] = new SelectList(productoPmvs, "cprecioventamax", "cprecioventamax", x.Pmv);
 
-                         ////Verifica si esta seleccionado algun PMV
-                         //if (((SelectList)TempData["PmvList" + x.ProductoID]).Count() > 0 && string.IsNullOrEmpty(x.Pmv))
-                         //{
-                         //    x.MensajeError += "Campo \"PMV\": Debe elegir el PMV del producto.";
-                         //    x.PmvError = true;
-                         //}
-                         else if (((SelectList)TempData["PmvList" + x.ProductoID]).Count() == 0)
+                             ////Verifica si esta seleccionado algun PMV
+                             //if (((SelectList)TempData["PmvList" + x.ProductoID]).Count() > 0 && string.IsNullOrEmpty(x.Pmv))
+                             //{
+                             //    x.MensajeError += "Campo \"PMV\": Debe elegir el PMV del producto.";
+                             //    x.PmvError = true;
+                             //}
+                         }
+                         //else if (((SelectList)TempData["PmvList" + x.ProductoID]).Count() == 0)
+                         else if (productoPmvs.Count() == 0)
                          {
                              x.MensajeError += "Campo \"PMV\": El producto no tiene existencia./";
                              x.PmvError = true;
